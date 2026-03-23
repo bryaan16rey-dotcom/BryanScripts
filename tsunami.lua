@@ -92,4 +92,7 @@ Tab3:CreateButton({
    Callback = function()
        viajando = false
        instantActivo = false
-       if _G.Conexion then _G.Conexion
+       if _G.Conexion then _G.Conexion:Disconnect() end
+       Rayfield:Destroy()
+   end,
+})
