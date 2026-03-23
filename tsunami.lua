@@ -1,23 +1,38 @@
-local Lucid = loadstring(game:HttpGet("https://raw.githubusercontent.com/Deaded-7/LucidLib/main/lucid.lua"))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- Crear la ventana principal
-local Window = Lucid:CreateWindow({
-    Name = "BRYAN SYSTEM V7",
-    Keybind = Enum.KeyCode.LeftControl -- AQUÍ FORZAMOS EL CONTROL IZQUIERDO
+-- GENERAR LA VENTANA
+local Window = Rayfield:CreateWindow({
+   Name = "BRYAN SYSTEM V8 | FINAL",
+   LoadingTitle = "Cargando Sistema...",
+   LoadingSubtitle = "by Bryan Rafael",
+   ConfigurationSaving = {Enabled = false},
+   KeySystem = false,
+   Keybind = "None" -- Desactivamos la tecla de la librería para que no moleste
 })
 
--- Crear una pestaña
-local MainTab = Window:CreateTab("Principal")
+local Tab = Window:CreateTab("Inicio", 4483362458)
+Tab:CreateLabel("Si el Control no funciona, avisame para cambiar la tecla.")
 
-MainTab:CreateLabel("Presiona CONTROL IZQUIERDO para ocultar/mostrar")
+-- === SISTEMA MANUAL DE ABRIR/CERRAR (FORZADO) ===
+local UserInputService = game:GetService("UserInputService")
+local visible = true
 
--- Botón de prueba para ver que todo cargue bien
-MainTab:CreateButton({
-    Name = "Quitar Script",
-    Callback = function()
-        Window:Destroy()
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    -- Detecta si presionas CONTROL IZQUIERDO o CONTROL DERECHO
+    if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+        visible = not visible
+        -- Buscamos la interfaz de Rayfield en el juego para esconderla
+        local gui = game:GetService("CoreGui"):FindFirstChild("Rayfield") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("Rayfield")
+        if gui then
+            gui.Enabled = visible
+        end
     end
-})
+end)
 
--- Notificación de inicio
-print("Script de Bryan cargado. Usa LeftControl.")
+-- Botón para quitar el script
+Tab:CreateButton({
+   Name = "Quitar Script",
+   Callback = function()
+       Rayfield:Destroy()
+   end
+})
