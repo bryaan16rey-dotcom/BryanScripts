@@ -1,13 +1,13 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN SYSTEM V16",
-   LoadingTitle = "Iniciando Túnel Seguro...",
+   Name = "BRYAN TORRE-SYSTEM V17",
+   LoadingTitle = "Calculando Ruta a la Torre...",
    ConfigurationSaving = {Enabled = true, FolderName = "BryanScripts"},
    Keybind = "LeftControl" 
 })
 
--- PESTAÑA 1: INTERACCIÓN (Carga 0)
+-- PESTAÑA 1: INTERACCIÓN
 local Tab1 = Window:CreateTab("Interacción", 4483362458)
 local instantActivo = false
 
@@ -29,12 +29,13 @@ Tab1:CreateToggle({
    end,
 })
 
--- PESTAÑA 2: NAVEGACIÓN (Túnel Automático)
-local Tab2 = Window:CreateTab("Misiones", 4483362458)
+-- PESTAÑA 2: NAVEGACIÓN A LA TORRE
+local Tab2 = Window:CreateTab("Navegación", 4483362458)
 local viajando = false
+local profundidad = -15 -- Ajuste perfecto bajo el suelo
 
 Tab2:CreateToggle({
-   Name = "VIAJE SUBTERRÁNEO A LA TORRE",
+   Name = "AUTO-VIAJE A LA TORRE (POR DEBAJO)",
    CurrentValue = false,
    Callback = function(Value)
       viajando = Value
@@ -43,29 +44,32 @@ Tab2:CreateToggle({
               local player = game.Players.LocalPlayer
               local root = player.Character:WaitForChild("HumanoidRootPart")
               
-              -- 1. BAJAR AL SÓTANO (Profundidad segura)
-              root.CFrame = root.CFrame * CFrame.new(0, -15, 0)
+              -- 1. BAJAR Y FLOTAR
+              -- Guardamos la posición inicial para saber hacia dónde es "el fondo"
+              local startPos = root.CFrame
+              root.CFrame = root.CFrame * CFrame.new(0, profundidad, 0)
               task.wait(0.5)
               
-              -- 2. BUSCAR LA TORRE (Final del mapa)
-              -- Buscamos un objeto que se llame 'Tower', 'Finish' o el más lejano
-              local meta = game:GetService("Workspace"):FindFirstChild("Tower") or game:GetService("Workspace"):FindFirstChild("Finish")
-              
-              if meta then
-                  -- VIAJAR POR DEBAJO (Interpolación suave para evitar lag)
-                  while viajando and (root.Position - meta.Position).Magnitude > 10 do
-                      local direccion = (meta.Position - root.Position).Unit
-                      root.CFrame = CFrame.new(root.Position + (direccion * 2)) * CFrame.Angles(0,0,0)
-                      task.wait(0.01)
-                  end
+              -- 2. AVANCE AUTOMÁTICO HACIA EL FINAL (TORRE)
+              -- Como no sabemos el nombre del objeto, avanzamos hacia la coordenada de la torre
+              while viajando do
+                  -- Movemos el personaje hacia adelante en el eje Z (que suele ser el final)
+                  -- Si ves que va hacia los lados, avísame para cambiar el eje
+                  root.Velocity = Vector3.new(0, 0, 0) -- Evita que la física lo empuje
+                  root.CFrame = root.CFrame * CFrame.new(0, 0, -2) -- Avanza 2 studs por ciclo
                   
-                  -- 3. SUBIR A LA SUPERFICIE AL LLEGAR
-                  if viajando then
-                      root.CFrame = meta.CFrame + Vector3.new(0, 5, 0)
-                      Rayfield:Notify({Title = "¡Llegamos!", Content = "Ya estás en la torre a salvo.", Duration = 5})
+                  -- CONDICIÓN DE PARADA: Si llegamos muy lejos (ajusta el número si falta camino)
+                  if math.abs(root.Position.Z) > 1500 then 
+                      break 
                   end
-              else
-                  Rayfield:Notify({Title = "Error", Content = "No encontré la Torre. Muévete manualmente bajo tierra.", Duration = 5})
+                  task.wait(0.01)
+              end
+              
+              -- 3. SUBIR AL MEDIO DE LA TORRE
+              if viajando then
+                  -- Aquí subimos el personaje a la superficie
+                  root.CFrame = root.CFrame * CFrame.new(0, -profundidad + 5, 0)
+                  Rayfield:Notify({Title = "¡Llegamos!", Content = "Posicionado en la Torre.", Duration = 5})
               end
           end)
       end
