@@ -1,14 +1,15 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN SYSTEM V2", -- Cambié el nombre para resetear la memoria
-   LoadingTitle = "Iniciando Sistema...",
+   Name = "BRYAN FINAL V3", -- Nuevo nombre para forzar el reset
+   LoadingTitle = "Reseteando Teclas...",
    LoadingSubtitle = "by Bryan Rafael",
    ConfigurationSaving = {
-      Enabled = false -- Desactivado para que no guarde la tecla 'K'
+      Enabled = false, -- Desactivamos el guardado para que no use la 'K'
+      FolderName = "BryanReset" -- Nombre de carpeta nuevo para ignorar la vieja
    },
    KeySystem = false,
-   Keybind = "LeftControl" -- Forzamos Control Izquierdo
+   Keybind = "LeftControl" -- TECLA: Control Izquierdo
 })
 
 local Tab = Window:CreateTab("Habilidades", 4483362458)
@@ -61,7 +62,7 @@ game:GetService("UserInputService").JumpRequest:Connect(function()
     end
 end)
 
--- 3. AJUSTES Y CERRAR
+-- 3. AJUSTES (Autodestrucción)
 local SettingsTab = Window:CreateTab("Ajustes", 4483362458)
 
 SettingsTab:CreateButton({
@@ -75,8 +76,8 @@ SettingsTab:CreateButton({
 })
 
 Rayfield:Notify({
-   Title = "¡Configuración Cargada!",
-   Content = "Usa CTRL IZQUIERDO para ocultar.",
+   Title = "¡RESETEO EXITOSO!",
+   Content = "Usa CTRL IZQUIERDO. La tecla K ha sido eliminada.",
    Duration = 5,
    Image = 4483362458,
 })
