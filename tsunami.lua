@@ -1,45 +1,53 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN FAST-E",
-   LoadingTitle = "Optimizando Recolección...",
+   Name = "BRYAN SYSTEM V10",
+   LoadingTitle = "Optimizando Interacción...",
    LoadingSubtitle = "by Bryan Rafael",
-   ConfigurationSaving = {Enabled = true, FolderName = "BryanScripts"},
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "BryanScripts"
+   },
    KeySystem = false,
    Keybind = "LeftControl" 
 })
 
 local Tab = Window:CreateTab("Interacción", 4483362458)
 
--- FUNCIÓN MAESTRA DE RECOJO 0 SEGUNDOS
-local fastEEnabled = false
+-- FUNCIÓN PARA CARGA 0
+local instantEnabled = false
 
 Tab:CreateToggle({
    Name = "RECOJO INSTANTÁNEO (Carga 0)",
    CurrentValue = false,
    Callback = function(Value)
-      fastEEnabled = Value
+      instantEnabled = Value
       task.spawn(function()
-          while fastEEnabled do
-              -- Buscamos todos los prompts de "E" en el juego
-              for _, prompt in pairs(game:GetService("Workspace"):GetDescendants()) do
-                  if prompt:IsA("ProximityPrompt") then
-                      prompt.HoldDuration = 0 -- Tiempo de carga a cero
-                      -- Opcional: Esto hace que se active a más distancia
-                      -- prompt.MaxActivationDistance = 20 
+          while instantEnabled do
+              -- Buscamos todos los prompts de "E" en el juego y bajamos la carga a 0
+              for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+                  if v:IsA("ProximityPrompt") then
+                      v.HoldDuration = 0
                   end
               end
-              task.wait(0.5) -- Escanea el mapa cada medio segundo por nuevos objetos
+              task.wait(0.5) -- Escaneo constante para nuevos objetos que aparezcan
           end
       end)
    end,
 })
 
--- BOTÓN DE CIERRE
+-- BOTÓN PARA CERRAR EL SCRIPT
 Tab:CreateButton({
-   Name = "Quitar Script",
+   Name = "Quitar Interfaz",
    Callback = function()
-       fastEEnabled = false
+       instantEnabled = false
        Rayfield:Destroy()
-   end
+   end,
+})
+
+Rayfield:Notify({
+   Title = "Sistema Bryan Listo",
+   Content = "Activa el Toggle para carga 0.",
+   Duration = 5,
+   Image = 4483362458,
 })
