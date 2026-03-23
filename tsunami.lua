@@ -1,4 +1,4 @@
--- LIMPIEZA TOTAL
+-- LIMPIEZA
 if game:GetService("CoreGui"):FindFirstChild("BryanMenu") then
     game:GetService("CoreGui").BryanMenu:Destroy()
 end
@@ -10,17 +10,18 @@ ScreenGui.Parent = game:GetService("CoreGui")
 local Frame = Instance.new("Frame")
 Frame.Size = UDim2.new(0, 220, 0, 160)
 Frame.Position = UDim2.new(0.5, -110, 0.2, 0)
-Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Frame.BorderSizePixel = 2
 Frame.Active = true
 Frame.Draggable = true 
 Frame.Parent = ScreenGui
 
--- BOTÓN E (Mantenemos lo funcional)
+-- BOTÓN E (FUNCIONAL)
 local btnE = Instance.new("TextButton")
 btnE.Size = UDim2.new(1, -20, 0, 40)
 btnE.Position = UDim2.new(0, 10, 0, 10)
 btnE.Text = "RECOJO E: OFF"
-btnE.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+btnE.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
 btnE.TextColor3 = Color3.new(1,1,1)
 btnE.Parent = Frame
 
@@ -28,7 +29,7 @@ local instantE = false
 btnE.MouseButton1Click:Connect(function()
     instantE = not instantE
     btnE.Text = instantE and "RECOJO E: ON" or "RECOJO E: OFF"
-    btnE.BackgroundColor3 = instantE and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+    btnE.BackgroundColor3 = instantE and Color3.fromRGB(0, 120, 0) or Color3.fromRGB(120, 0, 0)
     task.spawn(function()
         while instantE do
             for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
@@ -39,47 +40,46 @@ btnE.MouseButton1Click:Connect(function()
     end)
 end)
 
--- BOTÓN VIAJE RECTO (V27)
+-- BOTÓN VIAJE RECTO V28 (-8 STUDS)
 local btnViaje = Instance.new("TextButton")
 btnViaje.Size = UDim2.new(1, -20, 0, 40)
 btnViaje.Position = UDim2.new(0, 10, 0, 60)
-btnViaje.Text = "TEST VIAJE RECTO (20m)"
-btnViaje.BackgroundColor3 = Color3.fromRGB(0, 80, 180)
+btnViaje.Text = "TEST PROFUNDO (-8m)"
+btnViaje.BackgroundColor3 = Color3.fromRGB(0, 60, 150)
 btnViaje.TextColor3 = Color3.new(1,1,1)
 btnViaje.Parent = Frame
 
 btnViaje.MouseButton1Click:Connect(function()
     btnViaje.Interactable = false
-    btnViaje.Text = "VIAJANDO..."
+    btnViaje.Text = "TESTEANDO..."
     
     task.spawn(function()
         local char = game.Players.LocalPlayer.Character
         local root = char:WaitForChild("HumanoidRootPart")
         
-        -- CAPTURAMOS DIRECCIÓN Y ALTURA OBJETIVO
+        -- CAPTURAMOS DIRECCIÓN Y PROFUNDIDAD NUEVA
         local lookVector = root.CFrame.LookVector
-        local targetY = root.Position.Y - 5 -- Bajamos un poco más para asegurar que no te suba
+        local targetY = root.Position.Y - 8 -- PROBAMOS CON -8 PARA EVITAR DAÑO
         local startPos = root.Position
         
-        -- ANCLA DE FÍSICA: Evitamos que el juego nos empuje
+        -- CONGELAMOS FÍSICA
         root.Anchored = true 
         
-        -- BUCLE DE MOVIMIENTO (20 metros)
+        -- VIAJE DE PRUEBA (60 STUDS)
         local distanciaRecorrida = 0
         while distanciaRecorrida < 60 do 
-            -- Calculamos la nueva posición manteniendo la Y fija
             local nuevaPos = root.Position + (lookVector * 1.5)
-            root.CFrame = CFrame.new(nuevaPos.X, targetY, nuevaPos.Z) * CFrame.Angles(0, math.atan2(lookVector.X, lookVector.Z) + math.pi, 0)
+            root.CFrame = CFrame.new(nuevaPos.X, targetY, nuevaPos.Z) * CFrame.lookAt(Vector3.new(0,0,0), lookVector).Rotation
             
             distanciaRecorrida = (Vector3.new(root.Position.X, 0, root.Position.Z) - Vector3.new(startPos.X, 0, startPos.Z)).Magnitude
             task.wait(0.02)
         end
         
-        -- SOLTAMOS EL ANCLA Y SUBIMOS
-        root.CFrame = CFrame.new(root.Position.X, targetY + 6, root.Position.Z)
+        -- SUBIR Y DESANCLAR
+        root.CFrame = CFrame.new(root.Position.X, targetY + 9, root.Position.Z)
         root.Anchored = false
         
-        btnViaje.Text = "TEST VIAJE RECTO (20m)"
+        btnViaje.Text = "TEST PROFUNDO (-8m)"
         btnViaje.Interactable = true
     end)
 end)
