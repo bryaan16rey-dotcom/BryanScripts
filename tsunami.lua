@@ -6,12 +6,12 @@ local Window = Rayfield:CreateWindow({
    LoadingSubtitle = "by Bryan Rafael",
    ConfigurationSaving = {Enabled = false},
    KeySystem = false,
-   Keybind = "LeftControl" -- ESTA ES LA TECLA PARA ABRIR/CERRAR (Control Izquierdo)
+   Keybind = "LeftControl" -- AQUÍ: Ahora es Control Izquierdo
 })
 
 local Tab = Window:CreateTab("Habilidades", 4483362458)
 
--- 1. SECCIÓN DE VELOCIDAD (Con Toggle de Activar/Desactivar)
+-- 1. VELOCIDAD
 local speedEnabled = false
 Tab:CreateToggle({
    Name = "Activar Súper Velocidad",
@@ -20,7 +20,7 @@ Tab:CreateToggle({
    Callback = function(Value)
       speedEnabled = Value
       if not speedEnabled then
-          game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16 -- Vuelve a lo normal
+          game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
       end
    end,
 })
@@ -39,7 +39,7 @@ Tab:CreateSlider({
    end,
 })
 
--- 2. SECCIÓN DE SALTO (Con Toggle de Activar/Desactivar)
+-- 2. SALTO INFINITO
 local jumpEnabled = false
 Tab:CreateToggle({
    Name = "Activar Salto Infinito",
@@ -50,7 +50,6 @@ Tab:CreateToggle({
    end,
 })
 
--- Lógica del Salto (se queda corriendo de fondo pero solo funciona si el Toggle está ON)
 game:GetService("UserInputService").JumpRequest:Connect(function()
     if jumpEnabled then
         local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
@@ -60,10 +59,24 @@ game:GetService("UserInputService").JumpRequest:Connect(function()
     end
 end)
 
+-- 3. SECCIÓN DE CONFIGURACIÓN (PARA CERRAR TODO)
+local SettingsTab = Window:CreateTab("Ajustes", 4483362458)
+
+SettingsTab:CreateButton({
+   Name = "QUITAR INTERFAZ COMPLETAMENTE",
+   Callback = function()
+       -- Esto borra la interfaz y detiene las funciones
+       speedEnabled = false
+       jumpEnabled = false
+       game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+       Rayfield:Destroy()
+   end,
+})
+
 -- Notificación de Bienvenida
 Rayfield:Notify({
-   Title = "Sistema Listo",
-   Content = "Presiona 'CTRL' para ocultar el menú",
+   Title = "Sistema Bryan Listo",
+   Content = "Usa 'CTRL IZQUIERDO' para ocultar/mostrar.",
    Duration = 5,
    Image = 4483362458,
 })
