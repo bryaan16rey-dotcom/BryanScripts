@@ -1,9 +1,8 @@
--- LIMPIEZA
+-- LIMPIEZA TOTAL
 if game:GetService("CoreGui"):FindFirstChild("BryanMenu") then
     game:GetService("CoreGui").BryanMenu:Destroy()
 end
 
--- INTERFAZ
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "BryanMenu"
 ScreenGui.Parent = game:GetService("CoreGui")
@@ -11,24 +10,15 @@ ScreenGui.Parent = game:GetService("CoreGui")
 local Frame = Instance.new("Frame")
 Frame.Size = UDim2.new(0, 220, 0, 160)
 Frame.Position = UDim2.new(0.5, -110, 0.2, 0)
-Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-Frame.BorderSizePixel = 2
+Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 Frame.Active = true
 Frame.Draggable = true 
 Frame.Parent = ScreenGui
 
--- TÍTULO
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.Text = "TEST SUBTERRÁNEO V25"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-Title.Parent = Frame
-
--- BOTÓN E
+-- BOTÓN E (LO QUE YA FUNCIONA)
 local btnE = Instance.new("TextButton")
-btnE.Size = UDim2.new(1, -20, 0, 35)
-btnE.Position = UDim2.new(0, 10, 0, 40)
+btnE.Size = UDim2.new(1, -20, 0, 40)
+btnE.Position = UDim2.new(0, 10, 0, 10)
 btnE.Text = "RECOJO E: OFF"
 btnE.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
 btnE.TextColor3 = Color3.new(1,1,1)
@@ -49,30 +39,49 @@ btnE.MouseButton1Click:Connect(function()
     end)
 end)
 
--- BOTÓN TEST VIAJE (CORTO)
+-- BOTÓN VIAJE RECTO (V26)
 local btnViaje = Instance.new("TextButton")
-btnViaje.Size = UDim2.new(1, -20, 0, 35)
-btnViaje.Position = UDim2.new(0, 10, 0, 80)
-btnViaje.Text = "TEST VIAJE (20m)"
-btnViaje.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+btnViaje.Size = UDim2.new(1, -20, 0, 40)
+btnViaje.Position = UDim2.new(0, 10, 0, 60)
+btnViaje.Text = "TEST VIAJE RECTO (20m)"
+btnViaje.BackgroundColor3 = Color3.fromRGB(0, 80, 180)
 btnViaje.TextColor3 = Color3.new(1,1,1)
 btnViaje.Parent = Frame
 
 btnViaje.MouseButton1Click:Connect(function()
-    btnViaje.Text = "VIAJANDO..."
     btnViaje.Interactable = false
+    btnViaje.Text = "VIAJANDO..."
     
     task.spawn(function()
         local char = game.Players.LocalPlayer.Character
         local root = char:WaitForChild("HumanoidRootPart")
         
-        -- 1. BAJAR SOLO 1 METRO (Casi al ras)
-        root.CFrame = root.CFrame * CFrame.new(0, -3.5, 0)
-        task.wait(0.2)
+        -- CAPTURAMOS LA DIRECCIÓN FIJA AL INICIO
+        local lookVector = root.CFrame.LookVector
+        local startPos = root.Position
+        local targetY = root.Position.Y - 4.5 -- Bajamos 1.5 metros aprox
         
-        -- 2. GUARDAR POSICIÓN INICIAL PARA EL TEST
-        local posInicial = root.Position
+        -- INICIAMOS VIAJE
+        local distanciaRecorrida = 0
+        while distanciaRecorrida < 60 do -- 60 studs = 20 metros aprox
+            -- Forzamos la posición: Altura fija + Movimiento en la dirección capturada
+            local nuevaPos = root.Position + (lookVector * 1.5)
+            root.CFrame = CFrame.new(nuevaPos.X, targetY, nuevaPos.Z)
+            
+            distanciaRecorrida = (root.Position - Vector3.new(startPos.X, targetY, startPos.Z)).Magnitude
+            task.wait(0.02)
+        end
         
-        -- 3. BUCLE DE VIAJE CORTO (20 metros)
-        while true do
-            root.CFrame = root.CFrame * CFrame.new(0, 0, -2) -- Avanza de 2 en 2
+        -- SUBIR A LA SUPERFICIE
+        root.CFrame = CFrame.new(root.Position.X, targetY + 5, root.Position.Z)
+        btnViaje.Text = "TEST VIAJE RECTO (20m)"
+        btnViaje.Interactable = true
+    end)
+end)
+
+local btnClose = Instance.new("TextButton")
+btnClose.Size = UDim2.new(1, -20, 0, 30)
+btnClose.Position = UDim2.new(0, 10, 0, 110)
+btnClose.Text = "CERRAR"
+btnClose.Parent = Frame
+btnClose.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
