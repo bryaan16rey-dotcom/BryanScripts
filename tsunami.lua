@@ -1,13 +1,13 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN FIX V15",
-   LoadingTitle = "Modo Blindado...",
+   Name = "BRYAN SYSTEM V16",
+   LoadingTitle = "Iniciando Túnel Seguro...",
    ConfigurationSaving = {Enabled = true, FolderName = "BryanScripts"},
    Keybind = "LeftControl" 
 })
 
--- PESTAÑA 1: INTERACCIÓN (La que te gusta)
+-- PESTAÑA 1: INTERACCIÓN (Carga 0)
 local Tab1 = Window:CreateTab("Interacción", 4483362458)
 local instantActivo = false
 
@@ -29,26 +29,43 @@ Tab1:CreateToggle({
    end,
 })
 
--- PESTAÑA 2: SUPERVIVENCIA (MÉTODO ANTI-LAG)
-local Tab2 = Window:CreateTab("Supervivencia", 4483362458)
-local godMode = false
+-- PESTAÑA 2: NAVEGACIÓN (Túnel Automático)
+local Tab2 = Window:CreateTab("Misiones", 4483362458)
+local viajando = false
 
 Tab2:CreateToggle({
-   Name = "MODO INMORTAL (Sin Lag)",
+   Name = "VIAJE SUBTERRÁNEO A LA TORRE",
    CurrentValue = false,
    Callback = function(Value)
-      godMode = Value
-      if godMode then
+      viajando = Value
+      if viajando then
           task.spawn(function()
-              while godMode do
-                  local char = game.Players.LocalPlayer.Character
-                  if char and char:FindFirstChild("Humanoid") then
-                      -- 1. Mantenemos la vida al máximo
-                      char.Humanoid.Health = 100
-                      -- 2. Bloqueamos el estado de muerte
-                      char.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+              local player = game.Players.LocalPlayer
+              local root = player.Character:WaitForChild("HumanoidRootPart")
+              
+              -- 1. BAJAR AL SÓTANO (Profundidad segura)
+              root.CFrame = root.CFrame * CFrame.new(0, -15, 0)
+              task.wait(0.5)
+              
+              -- 2. BUSCAR LA TORRE (Final del mapa)
+              -- Buscamos un objeto que se llame 'Tower', 'Finish' o el más lejano
+              local meta = game:GetService("Workspace"):FindFirstChild("Tower") or game:GetService("Workspace"):FindFirstChild("Finish")
+              
+              if meta then
+                  -- VIAJAR POR DEBAJO (Interpolación suave para evitar lag)
+                  while viajando and (root.Position - meta.Position).Magnitude > 10 do
+                      local direccion = (meta.Position - root.Position).Unit
+                      root.CFrame = CFrame.new(root.Position + (direccion * 2)) * CFrame.Angles(0,0,0)
+                      task.wait(0.01)
                   end
-                  task.wait(0.1) -- Tiempo justo para no dar lag y ser rápido
+                  
+                  -- 3. SUBIR A LA SUPERFICIE AL LLEGAR
+                  if viajando then
+                      root.CFrame = meta.CFrame + Vector3.new(0, 5, 0)
+                      Rayfield:Notify({Title = "¡Llegamos!", Content = "Ya estás en la torre a salvo.", Duration = 5})
+                  end
+              else
+                  Rayfield:Notify({Title = "Error", Content = "No encontré la Torre. Muévete manualmente bajo tierra.", Duration = 5})
               end
           end)
       end
@@ -60,7 +77,7 @@ local Tab3 = Window:CreateTab("Ajustes", 4483362458)
 Tab3:CreateButton({
    Name = "Quitar Script",
    Callback = function()
-       godMode = false
+       viajando = false
        instantActivo = false
        if _G.Conexion then _G.Conexion:Disconnect() end
        Rayfield:Destroy()
