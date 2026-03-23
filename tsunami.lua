@@ -1,8 +1,8 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN TORRE-SYSTEM V17",
-   LoadingTitle = "Calculando Ruta a la Torre...",
+   Name = "BRYAN 'AL RAS' V18",
+   LoadingTitle = "Calculando Ruta Segura...",
    ConfigurationSaving = {Enabled = true, FolderName = "BryanScripts"},
    Keybind = "LeftControl" 
 })
@@ -32,10 +32,10 @@ Tab1:CreateToggle({
 -- PESTAÑA 2: NAVEGACIÓN A LA TORRE
 local Tab2 = Window:CreateTab("Navegación", 4483362458)
 local viajando = false
-local profundidad = -15 -- Ajuste perfecto bajo el suelo
+local profundidadRas = -5 -- AJUSTE CRÍTICO: Profundidad mínima para no morir
 
 Tab2:CreateToggle({
-   Name = "AUTO-VIAJE A LA TORRE (POR DEBAJO)",
+   Name = "AUTO-VIAJE 'AL RAS' A LA TORRE",
    CurrentValue = false,
    Callback = function(Value)
       viajando = Value
@@ -44,22 +44,19 @@ Tab2:CreateToggle({
               local player = game.Players.LocalPlayer
               local root = player.Character:WaitForChild("HumanoidRootPart")
               
-              -- 1. BAJAR Y FLOTAR
-              -- Guardamos la posición inicial para saber hacia dónde es "el fondo"
-              local startPos = root.CFrame
-              root.CFrame = root.CFrame * CFrame.new(0, profundidad, 0)
-              task.wait(0.5)
+              -- 1. BAJAR AL RAS (Flotación segura)
+              root.CFrame = root.CFrame * CFrame.new(0, profundidadRas, 0)
+              task.wait(0.3)
               
-              -- 2. AVANCE AUTOMÁTICO HACIA EL FINAL (TORRE)
-              -- Como no sabemos el nombre del objeto, avanzamos hacia la coordenada de la torre
+              -- 2. AVANCE AUTOMÁTICO HACIA EL FINAL
               while viajando do
-                  -- Movemos el personaje hacia adelante en el eje Z (que suele ser el final)
-                  -- Si ves que va hacia los lados, avísame para cambiar el eje
-                  root.Velocity = Vector3.new(0, 0, 0) -- Evita que la física lo empuje
-                  root.CFrame = root.CFrame * CFrame.new(0, 0, -2) -- Avanza 2 studs por ciclo
+                  -- Bloqueamos la física para que no se caiga ni suba solo
+                  root.Velocity = Vector3.new(0, 0, 0) 
+                  root.CFrame = root.CFrame * CFrame.new(0, 0, -3) -- Avanza un poco más rápido
                   
-                  -- CONDICIÓN DE PARADA: Si llegamos muy lejos (ajusta el número si falta camino)
-                  if math.abs(root.Position.Z) > 1500 then 
+                  -- CONDICIÓN DE PARADA (Llegada a la zona oscura)
+                  -- Si ves que se frena antes, sube este número
+                  if math.abs(root.Position.Z) > 1700 then 
                       break 
                   end
                   task.wait(0.01)
@@ -67,9 +64,9 @@ Tab2:CreateToggle({
               
               -- 3. SUBIR AL MEDIO DE LA TORRE
               if viajando then
-                  -- Aquí subimos el personaje a la superficie
-                  root.CFrame = root.CFrame * CFrame.new(0, -profundidad + 5, 0)
-                  Rayfield:Notify({Title = "¡Llegamos!", Content = "Posicionado en la Torre.", Duration = 5})
+                  -- Subimos justo a la superficie
+                  root.CFrame = root.CFrame * CFrame.new(0, -profundidadRas + 2, 0)
+                  Rayfield:Notify({Title = "¡Llegamos!", Content = "Posicionado en el centro de la Torre.", Duration = 5})
               end
           end)
       end
