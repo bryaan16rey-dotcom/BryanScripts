@@ -15,7 +15,7 @@ Frame.Active = true
 Frame.Draggable = true 
 Frame.Parent = ScreenGui
 
--- BOTÓN E (LO QUE YA FUNCIONA)
+-- BOTÓN E (Mantenemos lo funcional)
 local btnE = Instance.new("TextButton")
 btnE.Size = UDim2.new(1, -20, 0, 40)
 btnE.Position = UDim2.new(0, 10, 0, 10)
@@ -39,7 +39,7 @@ btnE.MouseButton1Click:Connect(function()
     end)
 end)
 
--- BOTÓN VIAJE RECTO (V26)
+-- BOTÓN VIAJE RECTO (V27)
 local btnViaje = Instance.new("TextButton")
 btnViaje.Size = UDim2.new(1, -20, 0, 40)
 btnViaje.Position = UDim2.new(0, 10, 0, 60)
@@ -56,24 +56,29 @@ btnViaje.MouseButton1Click:Connect(function()
         local char = game.Players.LocalPlayer.Character
         local root = char:WaitForChild("HumanoidRootPart")
         
-        -- CAPTURAMOS LA DIRECCIÓN FIJA AL INICIO
+        -- CAPTURAMOS DIRECCIÓN Y ALTURA OBJETIVO
         local lookVector = root.CFrame.LookVector
+        local targetY = root.Position.Y - 5 -- Bajamos un poco más para asegurar que no te suba
         local startPos = root.Position
-        local targetY = root.Position.Y - 4.5 -- Bajamos 1.5 metros aprox
         
-        -- INICIAMOS VIAJE
+        -- ANCLA DE FÍSICA: Evitamos que el juego nos empuje
+        root.Anchored = true 
+        
+        -- BUCLE DE MOVIMIENTO (20 metros)
         local distanciaRecorrida = 0
-        while distanciaRecorrida < 60 do -- 60 studs = 20 metros aprox
-            -- Forzamos la posición: Altura fija + Movimiento en la dirección capturada
+        while distanciaRecorrida < 60 do 
+            -- Calculamos la nueva posición manteniendo la Y fija
             local nuevaPos = root.Position + (lookVector * 1.5)
-            root.CFrame = CFrame.new(nuevaPos.X, targetY, nuevaPos.Z)
+            root.CFrame = CFrame.new(nuevaPos.X, targetY, nuevaPos.Z) * CFrame.Angles(0, math.atan2(lookVector.X, lookVector.Z) + math.pi, 0)
             
-            distanciaRecorrida = (root.Position - Vector3.new(startPos.X, targetY, startPos.Z)).Magnitude
+            distanciaRecorrida = (Vector3.new(root.Position.X, 0, root.Position.Z) - Vector3.new(startPos.X, 0, startPos.Z)).Magnitude
             task.wait(0.02)
         end
         
-        -- SUBIR A LA SUPERFICIE
-        root.CFrame = CFrame.new(root.Position.X, targetY + 5, root.Position.Z)
+        -- SOLTAMOS EL ANCLA Y SUBIMOS
+        root.CFrame = CFrame.new(root.Position.X, targetY + 6, root.Position.Z)
+        root.Anchored = false
+        
         btnViaje.Text = "TEST VIAJE RECTO (20m)"
         btnViaje.Interactable = true
     end)
