@@ -1,40 +1,39 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN FIX V20",
-   LoadingTitle = "Reiniciando Sistemas...",
-   ConfigurationSaving = {Enabled = true, FolderName = "BryanScripts"},
+   Name = "BRYAN V21 | ESTABLE",
+   LoadingTitle = "Cargando Interfaz...",
+   ConfigurationSaving = {Enabled = false}, -- Desactivado temporalmente para evitar conflictos de archivos viejos
    Keybind = "LeftControl" 
 })
 
--- PESTAÑA 1: INTERACCIÓN
-local Tab1 = Window:CreateTab("Interacción", 4483362458)
-local instantActivo = false
+-- PESTAÑA: PRINCIPAL
+local Tab = Window:CreateTab("Funciones", 4483362458)
 
-Tab1:CreateToggle({
+-- 1. RECOJO INSTANTÁNEO
+local instantE = false
+Tab:CreateToggle({
    Name = "RECOJO INSTANTÁNEO (E)",
    CurrentValue = true,
    Callback = function(Value)
-      instantActivo = Value
-      if instantActivo then
-          for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
-              if v:IsA("ProximityPrompt") then v.HoldDuration = 0 end
+      instantE = Value
+      task.spawn(function()
+          while instantE do
+              for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+                  if v:IsA("ProximityPrompt") then
+                      v.HoldDuration = 0
+                  end
+              end
+              task.wait(2) -- Escaneo lento para evitar LAG
           end
-          _G.Conexion = game:GetService("Workspace").DescendantAdded:Connect(function(d)
-              if instantActivo and d:IsA("ProximityPrompt") then d.HoldDuration = 0 end
-          end)
-      elseif _G.Conexion then
-          _G.Conexion:Disconnect()
-      end
+      end)
    end,
 })
 
--- PESTAÑA 2: MISIONES (Ruta a la Torre)
-local Tab2 = Window:CreateTab("Misiones", 4483362458)
+-- 2. VIAJE A LA TORRE (AL RAS)
 local viajando = false
-
-Tab2:CreateToggle({
-   Name = "VIAJE RECTO A LA TORRE",
+Tab:CreateToggle({
+   Name = "AUTO-VIAJE A LA TORRE",
    CurrentValue = false,
    Callback = function(Value)
       viajando = Value
@@ -43,42 +42,37 @@ Tab2:CreateToggle({
               local p = game.Players.LocalPlayer
               local root = p.Character:WaitForChild("HumanoidRootPart")
               
-              -- 1. BAJAR UN POQUITO (Al ras del suelo)
+              -- BAJAR UN POQUITO (Solo 2 studs para no morir)
               root.CFrame = root.CFrame * CFrame.new(0, -2.5, 0)
+              task.wait(0.2)
               
-              -- 2. FIJAR DIRECCIÓN (Hacia donde miras al activar)
-              local direccionFija = root.CFrame
-              
-              -- 3. BUCLE DE MOVIMIENTO (Sin usar Velocity para evitar lag/crasheos)
+              -- BUCLE DE MOVIMIENTO
               while viajando do
-                  -- Movemos el CFrame directamente hacia adelante
+                  -- Movimiento constante hacia adelante
                   root.CFrame = root.CFrame * CFrame.new(0, 0, -3)
                   
-                  -- CONDICIÓN DE PARADA (Distancia acumulada)
-                  -- Aumentamos el límite para llegar bien a la torre
+                  -- Verificación de parada (Distancia a la torre)
                   if math.abs(root.Position.Z) > 2200 then break end
                   
                   task.wait(0.01)
               end
               
-              -- 4. SUBIR AL LLEGAR
+              -- SUBIR AL LLEGAR
               if viajando then
                   root.CFrame = root.CFrame * CFrame.new(0, 4, 0)
-                  Rayfield:Notify({Title = "Llegamos", Content = "Estás en la zona de la Torre.", Duration = 5})
+                  Rayfield:Notify({Title = "Llegamos", Content = "Ya estás en la torre.", Duration = 5})
               end
           end)
       end
    end,
 })
 
--- BOTÓN DE CIERRE
-local Tab3 = Window:CreateTab("Ajustes", 4483362458)
-Tab3:CreateButton({
+-- BOTÓN DE CIERRE SEGURO
+Tab:CreateButton({
    Name = "Quitar Script",
    Callback = function()
        viajando = false
-       instantActivo = false
-       if _G.Conexion then _G.Conexion:Disconnect() end
+       instantE = false
        Rayfield:Destroy()
    end,
 })
