@@ -1,13 +1,13 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN GOD-SYSTEM V13",
-   LoadingTitle = "Activando Protocolos...",
+   Name = "BRYAN ELITE V14",
+   LoadingTitle = "Protocolo Inmortal...",
    ConfigurationSaving = {Enabled = true, FolderName = "BryanScripts"},
    Keybind = "LeftControl" 
 })
 
--- SECCIÓN 1: INTERACCIÓN
+-- PESTAÑA 1: INTERACCIÓN (La que ya te funciona bien)
 local Tab1 = Window:CreateTab("Interacción", 4483362458)
 local instantActivo = false
 
@@ -29,7 +29,7 @@ Tab1:CreateToggle({
    end,
 })
 
--- SECCIÓN 2: SUPERVIVENCIA (INMORTAL)
+-- PESTAÑA 2: SUPERVIVENCIA (GOD MODE REAL)
 local Tab2 = Window:CreateTab("Supervivencia", 4483362458)
 local godMode = false
 
@@ -42,14 +42,23 @@ Tab2:CreateToggle({
           while godMode do
               pcall(function()
                   local char = game.Players.LocalPlayer.Character
-                  if char and char:FindFirstChild("Humanoid") then
-                      -- Si la vida baja de 100, la subimos al toque
-                      if char.Humanoid.Health < 100 then
-                          char.Humanoid.Health = 100
+                  if char then
+                      -- TRUCO MAESTRO: Desactivamos la capacidad de morir
+                      if char:FindFirstChild("Humanoid") then
+                          char.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+                          if char.Humanoid.Health < 1 then
+                              char.Humanoid.Health = 100
+                          end
+                      end
+                      -- Quitamos el toque de las olas si aparecen
+                      for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+                          if v:IsA("BasePart") and (v.Name:lower():find("water") or v.Name:lower():find("wave")) then
+                              v.CanTouch = false
+                          end
                       end
                   end
               end)
-              task.wait() -- Muy rápido para que la ola no tenga tiempo de matarte
+              task.wait(1)
           end
       end)
    end,
@@ -63,6 +72,10 @@ Tab3:CreateButton({
        godMode = false
        instantActivo = false
        if _G.Conexion then _G.Conexion:Disconnect() end
+       local char = game.Players.LocalPlayer.Character
+       if char and char:FindFirstChild("Humanoid") then
+           char.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
+       end
        Rayfield:Destroy()
    end,
 })
