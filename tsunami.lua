@@ -1,18 +1,18 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN ELITE V12",
-   LoadingTitle = "Activando Escudos...",
+   Name = "BRYAN GOD-SYSTEM V13",
+   LoadingTitle = "Activando Protocolos...",
    ConfigurationSaving = {Enabled = true, FolderName = "BryanScripts"},
    Keybind = "LeftControl" 
 })
 
--- PESTAÑA 1: INTERACCIÓN (Carga 0)
+-- SECCIÓN 1: INTERACCIÓN
 local Tab1 = Window:CreateTab("Interacción", 4483362458)
 local instantActivo = false
 
 Tab1:CreateToggle({
-   Name = "RECOJO INSTANTÁNEO (Sin Lag)",
+   Name = "RECOJO INSTANTÁNEO (E)",
    CurrentValue = true,
    Callback = function(Value)
       instantActivo = Value
@@ -29,31 +29,27 @@ Tab1:CreateToggle({
    end,
 })
 
--- PESTAÑA 2: SUPERVIVENCIA (Anti-Tsunami)
+-- SECCIÓN 2: SUPERVIVENCIA (INMORTAL)
 local Tab2 = Window:CreateTab("Supervivencia", 4483362458)
-local antiOlas = false
+local godMode = false
 
 Tab2:CreateToggle({
-   Name = "INMUNITAT A LAS OLAS",
+   Name = "MODO DIOS (Inmune a Olas)",
    CurrentValue = false,
    Callback = function(Value)
-      antiOlas = Value
+      godMode = Value
       task.spawn(function()
-          while antiOlas do
-              -- Buscamos las partes que hacen daño (usualmente llamadas 'Water' o 'KillPart')
-              -- Este código anula la colisión de daño con tu personaje
+          while godMode do
               pcall(function()
                   local char = game.Players.LocalPlayer.Character
-                  if char then
-                      for _, part in pairs(game:GetService("Workspace"):GetDescendants()) do
-                          -- Detectamos si es agua o si tiene scripts de daño por contacto
-                          if part:IsA("BasePart") and (part.Name == "Water" or part.Name == "Wave") then
-                              part.CanTouch = false -- Aquí está el truco: la ola no te "siente"
-                          end
+                  if char and char:FindFirstChild("Humanoid") then
+                      -- Si la vida baja de 100, la subimos al toque
+                      if char.Humanoid.Health < 100 then
+                          char.Humanoid.Health = 100
                       end
                   end
               end)
-              task.wait(5) -- Lo hace cada 5 segundos para no dar LAG
+              task.wait() -- Muy rápido para que la ola no tenga tiempo de matarte
           end
       end)
    end,
@@ -62,10 +58,10 @@ Tab2:CreateToggle({
 -- BOTÓN DE CIERRE
 local Tab3 = Window:CreateTab("Ajustes", 4483362458)
 Tab3:CreateButton({
-   Name = "Cerrar Script",
+   Name = "Quitar Script",
    Callback = function()
+       godMode = false
        instantActivo = false
-       antiOlas = false
        if _G.Conexion then _G.Conexion:Disconnect() end
        Rayfield:Destroy()
    end,
