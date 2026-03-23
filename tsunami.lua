@@ -1,14 +1,13 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN V21 | ESTABLE",
-   LoadingTitle = "Cargando Interfaz...",
-   ConfigurationSaving = {Enabled = false}, -- Desactivado temporalmente para evitar conflictos de archivos viejos
+   Name = "BRYAN SAFE V22",
+   LoadingTitle = "Modo Seguro Activo",
+   ConfigurationSaving = {Enabled = false}, -- Esto evita conflictos con archivos viejos
    Keybind = "LeftControl" 
 })
 
--- PESTAÑA: PRINCIPAL
-local Tab = Window:CreateTab("Funciones", 4483362458)
+local Tab = Window:CreateTab("Principal", 4483362458)
 
 -- 1. RECOJO INSTANTÁNEO
 local instantE = false
@@ -19,21 +18,23 @@ Tab:CreateToggle({
       instantE = Value
       task.spawn(function()
           while instantE do
-              for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
-                  if v:IsA("ProximityPrompt") then
-                      v.HoldDuration = 0
+              pcall(function()
+                  for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+                      if v:IsA("ProximityPrompt") then
+                          v.HoldDuration = 0
+                      end
                   end
-              end
-              task.wait(2) -- Escaneo lento para evitar LAG
+              end)
+              task.wait(2)
           end
       end)
    end,
 })
 
--- 2. VIAJE A LA TORRE (AL RAS)
+-- 2. VIAJE A LA TORRE (AJUSTADO)
 local viajando = false
 Tab:CreateToggle({
-   Name = "AUTO-VIAJE A LA TORRE",
+   Name = "VIAJE RECTO A LA TORRE",
    CurrentValue = false,
    Callback = function(Value)
       viajando = Value
@@ -42,34 +43,30 @@ Tab:CreateToggle({
               local p = game.Players.LocalPlayer
               local root = p.Character:WaitForChild("HumanoidRootPart")
               
-              -- BAJAR UN POQUITO (Solo 2 studs para no morir)
-              root.CFrame = root.CFrame * CFrame.new(0, -2.5, 0)
-              task.wait(0.2)
+              -- BAJAR AL RAS (-1.5 es casi el suelo, muy seguro)
+              root.CFrame = root.CFrame * CFrame.new(0, -1.8, 0)
               
-              -- BUCLE DE MOVIMIENTO
               while viajando do
-                  -- Movimiento constante hacia adelante
+                  -- Movimiento por CFrame (No da lag)
                   root.CFrame = root.CFrame * CFrame.new(0, 0, -3)
                   
-                  -- Verificación de parada (Distancia a la torre)
-                  if math.abs(root.Position.Z) > 2200 then break end
+                  -- DISTANCIA: Aumentamos a 2500 para asegurar que llegues al fondo
+                  if math.abs(root.Position.Z) > 2500 then break end
                   
                   task.wait(0.01)
               end
               
-              -- SUBIR AL LLEGAR
               if viajando then
-                  root.CFrame = root.CFrame * CFrame.new(0, 4, 0)
-                  Rayfield:Notify({Title = "Llegamos", Content = "Ya estás en la torre.", Duration = 5})
+                  root.CFrame = root.CFrame * CFrame.new(0, 3.5, 0)
+                  Rayfield:Notify({Title = "Llegamos", Content = "En la zona oscura de la Torre", Duration = 5})
               end
           end)
       end
    end,
 })
 
--- BOTÓN DE CIERRE SEGURO
 Tab:CreateButton({
-   Name = "Quitar Script",
+   Name = "Cerrar Todo",
    Callback = function()
        viajando = false
        instantE = false
