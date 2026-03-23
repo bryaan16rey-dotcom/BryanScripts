@@ -1,72 +1,69 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "BRYAN SYSTEM V1 | Tsunami",
+   Name = "BRYAN SYSTEM V1",
    LoadingTitle = "Cargando Interfaz...",
    LoadingSubtitle = "by Bryan Rafael",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = "BryanScripts"
-   },
-   KeySystem = false -- Sin sistema de llaves para que entres directo
+   ConfigurationSaving = {Enabled = false},
+   KeySystem = false,
+   Keybind = "LeftControl" -- ESTA ES LA TECLA PARA ABRIR/CERRAR (Control Izquierdo)
 })
 
-local Tab = Window:CreateTab("Principal", 4483362458) -- Icono de casa
+local Tab = Window:CreateTab("Habilidades", 4483362458)
 
--- SLIDER PARA CONTROLAR LA VELOCIDAD
-local Slider = Tab:CreateSlider({
-   Name = "Velocidad de Caminado",
-   Range = {16, 300},
-   Increment = 1,
-   Suffix = "Velocidad",
-   CurrentValue = 16,
-   Flag = "Slider1",
+-- 1. SECCIÓN DE VELOCIDAD (Con Toggle de Activar/Desactivar)
+local speedEnabled = false
+Tab:CreateToggle({
+   Name = "Activar Súper Velocidad",
+   CurrentValue = false,
+   Flag = "ToggleSpeed", 
    Callback = function(Value)
-      if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+      speedEnabled = Value
+      if not speedEnabled then
+          game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16 -- Vuelve a lo normal
+      end
+   end,
+})
+
+Tab:CreateSlider({
+   Name = "Ajustar Velocidad",
+   Range = {16, 250},
+   Increment = 1,
+   Suffix = "Vel",
+   CurrentValue = 50,
+   Flag = "SliderSpeed",
+   Callback = function(Value)
+      if speedEnabled then
           game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
       end
    end,
 })
 
--- BOTÓN PARA SALTO INFINITO
-local Button = Tab:CreateButton({
+-- 2. SECCIÓN DE SALTO (Con Toggle de Activar/Desactivar)
+local jumpEnabled = false
+Tab:CreateToggle({
    Name = "Activar Salto Infinito",
-   Callback = function()
-       _G.InfJump = true
-       local UserInputService = game:GetService("UserInputService")
-       
-       -- Esta función permite saltar en el aire detectando cada vez que pides un salto
-       UserInputService.JumpRequest:Connect(function()
-           if _G.InfJump then
-               local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-               if humanoid then
-                   humanoid:ChangeState("Jumping")
-               end
-           end
-       end)
-
-       -- Notificación de éxito
-       Rayfield:Notify({
-          Title = "Sistema Bryan",
-          Content = "Salto Infinito Activado con éxito",
-          Duration = 4,
-          Image = 4483362458,
-       })
+   CurrentValue = false,
+   Flag = "ToggleJump",
+   Callback = function(Value)
+      jumpEnabled = Value
    end,
 })
 
--- BOTÓN PARA CERRAR EL MENÚ
-local Button2 = Tab:CreateButton({
-   Name = "Cerrar Menú",
-   Callback = function()
-       Rayfield:Destroy()
-   end,
-})
+-- Lógica del Salto (se queda corriendo de fondo pero solo funciona si el Toggle está ON)
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if jumpEnabled then
+        local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum:ChangeState("Jumping")
+        end
+    end
+end)
 
--- Mensaje de Bienvenida al ejecutar
+-- Notificación de Bienvenida
 Rayfield:Notify({
-   Title = "Bienvenido Bryan",
-   Content = "Script cargado para Escapa del Tsunami",
+   Title = "Sistema Listo",
+   Content = "Presiona 'CTRL' para ocultar el menú",
    Duration = 5,
    Image = 4483362458,
 })
