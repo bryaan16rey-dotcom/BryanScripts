@@ -1,24 +1,23 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Lucid = loadstring(game:HttpGet("https://raw.githubusercontent.com/Deaded-7/LucidLib/main/lucid.lua"))()
 
-local Window = Rayfield:CreateWindow({
-   Name = "CONTROL TEST | BRYAN",
-   LoadingTitle = "Probando Tecla Control...",
-   LoadingSubtitle = "by Bryan Rafael",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = "BryanControlFix" -- Nombre nuevo para resetear la memoria
-   },
-   KeySystem = false,
-   Keybind = "LeftControl" -- ESTA ES LA TECLA OBJETIVO
+-- Crear la ventana principal
+local Window = Lucid:CreateWindow({
+    Name = "BRYAN SYSTEM V7",
+    Keybind = Enum.KeyCode.LeftControl -- AQUÍ FORZAMOS EL CONTROL IZQUIERDO
 })
 
-local Tab = Window:CreateTab("Inicio", 4483362458)
+-- Crear una pestaña
+local MainTab = Window:CreateTab("Principal")
 
-Tab:CreateLabel("Si ves esto, presiona el CONTROL IZQUIERDO para cerrar/abrir")
+MainTab:CreateLabel("Presiona CONTROL IZQUIERDO para ocultar/mostrar")
 
-Tab:CreateButton({
-   Name = "Cerrar Script por completo",
-   Callback = function()
-       Rayfield:Destroy()
-   end,
+-- Botón de prueba para ver que todo cargue bien
+MainTab:CreateButton({
+    Name = "Quitar Script",
+    Callback = function()
+        Window:Destroy()
+    end
 })
+
+-- Notificación de inicio
+print("Script de Bryan cargado. Usa LeftControl.")
