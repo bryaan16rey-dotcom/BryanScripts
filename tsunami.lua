@@ -1,27 +1,30 @@
--- RESET TOTAL
-local ui = game:GetService("CoreGui"):FindFirstChild("BryanFinal")
-if ui then ui:Destroy() end
+-- LIMPIEZA TOTAL
+for _, v in pairs(game:GetService("CoreGui"):GetChildren()) do
+    if v.Name == "BryanUltra" then v:Destroy() end
+end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "BryanFinal"
+ScreenGui.Name = "BryanUltra"
 ScreenGui.Parent = game:GetService("CoreGui")
 
-local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 180, 0, 100)
-Frame.Position = UDim2.new(0.5, -90, 0.3, 0)
-Frame.BackgroundColor3 = Color3.new(0,0,0)
-Frame.BorderSizePixel = 2
-Frame.Parent = ScreenGui
+local Main = Instance.new("Frame")
+Main.Size = UDim2.new(0, 180, 0, 100)
+Main.Position = UDim2.new(0.5, -90, 0.4, 0)
+Main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Main.BorderSizePixel = 4
+Main.Active = true
+Main.Draggable = true
+Main.Parent = ScreenGui
 
--- TEXTO DE ESTADO
-local txt = Instance.new("TextLabel")
-txt.Size = UDim2.new(1, 0, 0, 30)
-txt.Text = "AUTO-E: ON"
-txt.TextColor3 = Color3.new(1,1,1)
-txt.BackgroundTransparency = 1
-txt.Parent = Frame
+-- BOTÓN 1: RECOJO E
+local btnE = Instance.new("TextButton")
+btnE.Size = UDim2.new(1, -10, 0, 40)
+btnE.Position = UDim2.new(0, 5, 0, 5)
+btnE.Text = "AUTO-E: ON"
+btnE.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+btnE.TextColor3 = Color3.new(1,1,1)
+btnE.Parent = Main
 
--- BUCLE DE RECOJO (E)
 task.spawn(function()
     while true do
         pcall(function()
@@ -33,33 +36,36 @@ task.spawn(function()
     end
 end)
 
--- BOTÓN DE VIAJE AL ABISMO (-250m)
-local btn = Instance.new("TextButton")
-btn.Size = UDim2.new(0.9, 0, 0, 50)
-btn.Position = UDim2.new(0.05, 0, 0.4, 0)
-btn.Text = "MODO FANTASMA (-250m)"
-btn.BackgroundColor3 = Color3.new(0.1, 0.4, 0.8)
-btn.TextColor3 = Color3.new(1,1,1)
-btn.Parent = Frame
+-- BOTÓN 2: VIAJE ABISMAL (-300)
+local btnViaje = Instance.new("TextButton")
+btnViaje.Size = UDim2.new(1, -10, 0, 40)
+btnViaje.Position = UDim2.new(0, 5, 0, 50)
+btnViaje.Text = "TELEPORT TORRE (-300m)"
+btnViaje.BackgroundColor3 = Color3.fromRGB(0, 50, 200)
+btnViaje.TextColor3 = Color3.new(1,1,1)
+btnViaje.Parent = Main
 
-btn.MouseButton1Click:Connect(function()
-    btn.Text = "VIAJANDO..."
-    btn.Interactable = false
+btnViaje.MouseButton1Click:Connect(function()
+    btnViaje.Text = "VIAJANDO..."
+    btnViaje.Interactable = false
     
-    local root = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+    local char = game.Players.LocalPlayer.Character
+    local root = char:WaitForChild("HumanoidRootPart")
     local dir = root.CFrame.LookVector
-    local targetY = root.Position.Y - 250 -- PROFUNDIDAD EXTREMA
+    local targetY = root.Position.Y - 300 -- PROFUNDIDAD MÁXIMA PARA EVITAR DAÑO
     
     root.Anchored = true 
     
     task.spawn(function()
-        for i = 1, 150 do -- Viaje largo para cruzar todo el mapa
+        -- Viaje rápido y profundo
+        for i = 1, 150 do 
             root.CFrame = CFrame.new(root.Position.X + (dir.X * 3), targetY, root.Position.Z + (dir.Z * 3))
             task.wait(0.01)
         end
-        root.CFrame = CFrame.new(root.Position.X, targetY + 251, root.Position.Z)
+        -- Regreso a la superficie
+        root.CFrame = CFrame.new(root.Position.X, targetY + 301, root.Position.Z)
         root.Anchored = false
-        btn.Text = "MODO FANTASMA (-250m)"
-        btn.Interactable = true
+        btnViaje.Text = "TELEPORT TORRE (-300m)"
+        btnViaje.Interactable = true
     end)
 end)
