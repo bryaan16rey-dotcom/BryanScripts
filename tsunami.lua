@@ -10,17 +10,18 @@ ScreenGui.Parent = game:GetService("CoreGui")
 local Frame = Instance.new("Frame")
 Frame.Size = UDim2.new(0, 220, 0, 160)
 Frame.Position = UDim2.new(0.5, -110, 0.2, 0)
-Frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Frame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+Frame.BorderSizePixel = 2
 Frame.Active = true
 Frame.Draggable = true 
 Frame.Parent = ScreenGui
 
--- BOTÓN E (LO QUE YA TE FUNCIONA)
+-- BOTÓN E (LO QUE YA FUNCIONA PERFECTO)
 local btnE = Instance.new("TextButton")
 btnE.Size = UDim2.new(1, -20, 0, 40)
 btnE.Position = UDim2.new(0, 10, 0, 10)
 btnE.Text = "RECOJO E: OFF"
-btnE.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+btnE.BackgroundColor3 = Color3.fromRGB(80, 0, 0)
 btnE.TextColor3 = Color3.new(1,1,1)
 btnE.Parent = Frame
 
@@ -28,7 +29,7 @@ local instantE = false
 btnE.MouseButton1Click:Connect(function()
     instantE = not instantE
     btnE.Text = instantE and "RECOJO E: ON" or "RECOJO E: OFF"
-    btnE.BackgroundColor3 = instantE and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(100, 0, 0)
+    btnE.BackgroundColor3 = instantE and Color3.fromRGB(0, 80, 0) or Color3.fromRGB(80, 0, 0)
     task.spawn(function()
         while instantE do
             for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
@@ -39,35 +40,34 @@ btnE.MouseButton1Click:Connect(function()
     end)
 end)
 
--- BOTÓN VIAJE PROFUNDO V29 (-15 STUDS)
+-- BOTÓN VIAJE ABISAL V30 (-35 STUDS)
 local btnViaje = Instance.new("TextButton")
 btnViaje.Size = UDim2.new(1, -20, 0, 40)
 btnViaje.Position = UDim2.new(0, 10, 0, 60)
-btnViaje.Text = "INMERSIÓN TOTAL (-15m)"
-btnViaje.BackgroundColor3 = Color3.fromRGB(0, 50, 120)
+btnViaje.Text = "VIAJE ABISAL (-35m)"
+btnViaje.BackgroundColor3 = Color3.fromRGB(0, 30, 100)
 btnViaje.TextColor3 = Color3.new(1,1,1)
 btnViaje.Parent = Frame
 
 btnViaje.MouseButton1Click:Connect(function()
     btnViaje.Interactable = false
-    btnViaje.Text = "TEST PROFUNDO..."
+    btnViaje.Text = "EN EL ABISMO..."
     
     task.spawn(function()
         local char = game.Players.LocalPlayer.Character
         local root = char:WaitForChild("HumanoidRootPart")
         
-        -- CAPTURAMOS DIRECCIÓN Y PROFUNDIDAD SEGURA
+        -- CAPTURAMOS DIRECCIÓN Y PROFUNDIDAD ABISAL
         local lookVector = root.CFrame.LookVector
         local startPos = root.Position
-        local targetY = root.Position.Y - 15 -- PROFUNDIDAD MÁXIMA
+        local targetY = root.Position.Y - 35 -- BAJAMOS MUCHO MÁS
         
-        -- BLOQUEAMOS FÍSICA Y GRAVEDAD
+        -- ANCLA TOTAL PARA EVITAR DAÑO
         root.Anchored = true 
         
-        -- VIAJE RECTO (80 STUDS - UN POCO MÁS LARGO)
+        -- VIAJE RECTO (100 STUDS - PARA TESTEAR BIEN)
         local distanciaRecorrida = 0
-        while distanciaRecorrida < 80 do 
-            -- Mantenemos la altura exacta de -15 studs
+        while distanciaRecorrida < 100 do 
             local nuevaPos = root.Position + (lookVector * 1.5)
             root.CFrame = CFrame.new(nuevaPos.X, targetY, nuevaPos.Z) * CFrame.lookAt(Vector3.new(0,0,0), lookVector).Rotation
             
@@ -75,11 +75,11 @@ btnViaje.MouseButton1Click:Connect(function()
             task.wait(0.01)
         end
         
-        -- REGRESO A LA SUPERFICIE
-        root.CFrame = CFrame.new(root.Position.X, targetY + 16, root.Position.Z)
+        -- REGRESO A LA SUPERFICIE (Si no has muerto por el void)
+        root.CFrame = CFrame.new(root.Position.X, targetY + 36, root.Position.Z)
         root.Anchored = false
         
-        btnViaje.Text = "INMERSIÓN TOTAL (-15m)"
+        btnViaje.Text = "VIAJE ABISAL (-35m)"
         btnViaje.Interactable = true
     end)
 end)
