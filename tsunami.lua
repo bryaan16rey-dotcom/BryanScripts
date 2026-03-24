@@ -1,97 +1,85 @@
--- V108: CLON PROFESIONAL CARRIL 2 (BRYAN MAESTRO)
--- Optimizado para TikTok Live - Villa El Salvador
-
+-- CLON IDENTICO OSAKA GALAXY 6.5 - BRYAN EDITION
+-- Basado en: osakaTP2/OsakaTP2/main/Escape%20tsunami
 local ScreenGui = Instance.new("ScreenGui")
-local MainFrame = Instance.new("Frame")
+local Main = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
-local StartBtn = Instance.new("TextButton")
-local CloseBtn = Instance.new("TextButton")
-local AutoEBtn = Instance.new("TextButton")
+local ButtonFrame = Instance.new("Frame")
+local Start = Instance.new("TextButton")
+local AutoE = Instance.new("TextButton")
+local Exit = Instance.new("TextButton")
 
--- 1. CONFIGURACIÓN VISUAL
+-- DISEÑO IDENTICO AL ORIGINAL
 ScreenGui.Parent = game:GetService("CoreGui")
-ScreenGui.Name = "BryanMaestro_V108"
+Main.Name = "OsakaMain"
+Main.Parent = ScreenGui
+Main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Main.Position = UDim2.new(0.5, -110, 0.4, 0)
+Main.Size = UDim2.new(0, 220, 0, 190)
+Main.Active = true
+Main.Draggable = true
+Instance.new("UICorner", Main).CornerRadius = RaycastParams.new().FilterDescendantsInstances and UDim.new(0, 8)
 
-MainFrame.Name = "MainFrame"
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-MainFrame.BorderSizePixel = 0
-MainFrame.Position = UDim2.new(0.5, -100, 0.4, 0)
-MainFrame.Size = UDim2.new(0, 220, 0, 180)
-MainFrame.Active = true
-MainFrame.Draggable = true -- Para moverlo en el Live
-
-local Corner = Instance.new("UICorner", MainFrame)
-
-Title.Parent = MainFrame
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Text = "BRYAN SCRIPTS V108"
-Title.TextColor3 = Color3.fromRGB(0, 255, 150)
+Title.Parent = Main
+Title.Size = UDim2.new(1, 0, 0, 45)
+Title.Text = "OSAKA GALAXY 6.5 (BRYAN)"
+Title.TextColor3 = Color3.fromRGB(0, 200, 255)
+Title.TextSize = 17
+Title.Font = Enum.Font.GothamBold
 Title.BackgroundTransparency = 1
-Title.TextSize = 18
-Title.Font = Enum.Font.SourceSansBold
 
--- 2. BOTÓN: IR A LA META (CARRIL 2)
-StartBtn.Parent = MainFrame
-StartBtn.Position = UDim2.new(0.1, 0, 0.25, 0)
-StartBtn.Size = UDim2.new(0.8, 0, 0.22, 0)
-StartBtn.Text = "INICIAR CARRIL 2"
-StartBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-StartBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-StartBtn.Font = Enum.Font.SourceSansBold
-Instance.new("UICorner", StartBtn)
+-- LÓGICA DE MOVIMIENTO EXACTA (CARRIL 2)
+Start.Name = "Start"
+Start.Parent = Main
+Start.Position = UDim2.new(0.1, 0, 0.28, 0)
+Start.Size = UDim2.new(0.8, 0, 0.2, 0)
+Start.Text = "IR A LA META (C2)"
+Start.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
+Start.TextColor3 = Color3.fromRGB(255, 255, 255)
+Start.Font = Enum.Font.GothamBold
+Instance.new("UICorner", Start)
 
--- 3. BOTÓN: AUTO-E (PARA PREMIOS)
-AutoEBtn.Parent = MainFrame
-AutoEBtn.Position = UDim2.new(0.1, 0, 0.52, 0)
-AutoEBtn.Size = UDim2.new(0.8, 0, 0.22, 0)
-AutoEBtn.Text = "AUTO-E (ACTIVO)"
-AutoEBtn.BackgroundColor3 = Color3.fromRGB(100, 0, 200)
-AutoEBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-AutoEBtn.Font = Enum.Font.SourceSansBold
-Instance.new("UICorner", AutoEBtn)
-
--- 4. BOTÓN: CERRAR UI
-CloseBtn.Parent = MainFrame
-CloseBtn.Position = UDim2.new(0.1, 0, 0.8, 0)
-CloseBtn.Size = UDim2.new(0.8, 0, 0.15, 0)
-CloseBtn.Text = "ELIMINAR VENTANA"
-CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Instance.new("UICorner", CloseBtn)
-
--- LÓGICA DE MOVIMIENTO (CARRIL 2 FIJO)
-StartBtn.MouseButton1Click:Connect(function()
+Start.MouseButton1Click:Connect(function()
     local p = game.Players.LocalPlayer
-    local r = p.Character.HumanoidRootPart
-    local h = p.Character.Humanoid
+    local char = p.Character or p.CharacterAdded:Wait()
+    local root = char:WaitForChild("HumanoidRootPart")
+    local hum = char:WaitForChild("Humanoid")
+
+    -- PUNTO A Y CARRIL 2 (ESTO BLOQUEA EL DESVÍO)
+    local PosX = root.Position.X
+    local Carril2 = root.Position.Z 
     
-    -- BLOQUEO DE PUNTO A Y CARRIL 2
-    local Carril2_Z = r.Position.Z -- Guarda el medio exacto donde estés parado
-    local Inicio_X = r.Position.X
-    
-    r.Anchored = true
+    root.Anchored = true
     
     task.spawn(function()
-        -- 900 PASOS PARA LLEGAR AL FINAL (PUNTO B)
-        for i = 1, 900 do
-            -- AVANCE RECTO: X aumenta, Z se bloquea en Carril 2, Altura -150 (Galaxy)
-            r.CFrame = CFrame.new(Inicio_X + (i * 5.2), -150, Carril2_Z)
+        -- 920 PASOS (DISTANCIA GALAXY 6.5)
+        for i = 1, 920 do
+            -- Eje X positivo (adelante), Altura -180 (profundo), Carril 2 fijo
+            root.CFrame = CFrame.new(PosX + (i * 5.5), -180, Carril2)
             
-            r.Velocity = Vector3.zero
-            h:ChangeState(11) 
+            -- Lógica Anti-Kick de Osaka
+            root.Velocity = Vector3.new(0, 0, 0)
+            hum:ChangeState(11)
             task.wait(0.01)
         end
         
-        -- SUBIDA FINAL EN LA TORRE
-        r.CFrame = r.CFrame * CFrame.new(0, 165, 0)
+        -- SUBIDA FINAL EXACTA
+        root.CFrame = root.CFrame * CFrame.new(0, 195, 0)
         task.wait(0.2)
-        r.Anchored = false
-        h:ChangeState(12)
+        root.Anchored = false
+        hum:ChangeState(12)
     end)
 end)
 
-AutoEBtn.MouseButton1Click:Connect(function()
+-- AUTO-E
+AutoE.Parent = Main
+AutoE.Position = UDim2.new(0.1, 0, 0.53, 0)
+AutoE.Size = UDim2.new(0.8, 0, 0.2, 0)
+AutoE.Text = "AUTO-E: ON"
+AutoE.BackgroundColor3 = Color3.fromRGB(80, 0, 180)
+AutoE.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", AutoE)
+
+AutoE.MouseButton1Click:Connect(function()
     task.spawn(function()
         while task.wait(0.5) do
             for _, v in pairs(workspace:GetDescendants()) do
@@ -101,6 +89,15 @@ AutoEBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
-CloseBtn.MouseButton1Click:Connect(function()
+-- ELIMINAR UI
+Exit.Parent = Main
+Exit.Position = UDim2.new(0.1, 0, 0.78, 0)
+Exit.Size = UDim2.new(0.8, 0, 0.15, 0)
+Exit.Text = "CERRAR"
+Exit.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+Exit.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", Exit)
+
+Exit.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
