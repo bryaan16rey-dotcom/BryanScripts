@@ -1,46 +1,58 @@
--- V88: VERSIÓN GITHUB ESTABLE
-local L = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local W = L.CreateLib("BRYAN MAESTRO V88", "Midnight")
+-- V107: CLON TOTAL EJE FIJO (BRYAN MAESTRO)
+-- Borra todo lo anterior en tu GitHub y pega esto:
 
-local T = W:NewTab("Principal")
-local S = T:NewSection("Viaje a la Torre")
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local StartBtn = Instance.new("TextButton")
+local CloseBtn = Instance.new("TextButton")
+local UICorner = Instance.new("UICorner")
 
-S:NewButton("IR A LA TORRE (GALAXY)", "650 Pasos - Inmune a Olas", function()
-    local p = game.Players.LocalPlayer
-    local c = p.Character or p.CharacterAdded:Wait()
-    local r = c:WaitForChild("HumanoidRootPart")
-    local h = c:WaitForChild("Humanoid")
+-- CONFIGURACIÓN DE LA VENTANA (PARA QUE SE VEA PROFESIONAL EN EL LIVE)
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.Name = "BryanClonOsaka"
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Position = UDim2.new(0.5, -100, 0.4, 0)
+MainFrame.Size = UDim2.new(0, 200, 0, 150)
+MainFrame.Active = true
+MainFrame.Draggable = true -- Puedes moverlo con el mouse
+
+local corner = Instance.new("UICorner", MainFrame)
+
+Title.Parent = MainFrame
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "BRYAN V107"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1
+Title.TextSize = 18
+
+-- BOTÓN DE INICIO (ESTILO OSAKA)
+StartBtn.Parent = MainFrame
+StartBtn.Position = UDim2.new(0.1, 0, 0.35, 0)
+StartBtn.Size = UDim2.new(0.8, 0, 0.25, 0)
+StartBtn.Text = "INICIAR CARRIL 2"
+StartBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+StartBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", StartBtn)
+
+-- BOTÓN CERRAR
+CloseBtn.Parent = MainFrame
+CloseBtn.Position = UDim2.new(0.1, 0, 0.7, 0)
+CloseBtn.Size = UDim2.new(0.8, 0, 0.2, 0)
+CloseBtn.Text = "ELIMINAR UI"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", CloseBtn)
+
+-- LÓGICA DE VIAJE (COPIA EXACTA DE MOVIMIENTO)
+StartBtn.MouseButton1Click:Connect(function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local root = character:WaitForChild("HumanoidRootPart")
+    local hum = character:WaitForChild("Humanoid")
     
-    local sP = r.Position
-    local sR = r.CFrame.Rotation
-    local d = r.CFrame.LookVector
-    r.Anchored = true
-    
-    task.spawn(function()
-        -- 650 PASOS A 5.0m (DISTANCIA DOBLE)
-        for i = 1, 650 do
-            -- MODO GALAXY -150m (INMUNE A OLAS)
-            r.CFrame = CFrame.new(sP + (d * (i * 5.0))) * CFrame.new(0, -150, 0) * sR
-            r.Velocity = Vector3.new(0,0,0) -- ANTI-RETROCESO
-            h:ChangeState(11) 
-            task.wait(0.01)
-        end
-        r.CFrame = r.CFrame * CFrame.new(0, 162, 0)
-        task.wait(0.3)
-        r.Anchored = false
-        h:ChangeState(12)
-    end)
-end)
-
-local S2 = T:NewSection("Extras")
-S2:NewButton("AUTO-E (ON)", "Recoge premios solo", function()
-    task.spawn(function()
-        while task.wait(0.5) do
-            pcall(function()
-                for _, v in pairs(workspace:GetDescendants()) do
-                    if v:IsA("ProximityPrompt") then v.HoldDuration = 0 end
-                end
-            end)
-        end
-    end)
-end)
+    -- ESTO ES LO QUE QUERÍAS: PUNTO A Y CARRIL 2 FIJOS
+    -- Tomamos la Z actual (ponte en el 2 antes de darle click)
