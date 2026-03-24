@@ -1,71 +1,52 @@
--- LIMPIEZA TOTAL
-for _, v in pairs(game:GetService("CoreGui"):GetChildren()) do
-    if v.Name == "BryanUltra" then v:Destroy() end
-end
+-- V86: CARGA DESDE GITHUB (ESTILO OSAKA)
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("BRYAN MAESTRO - GALAXY V86", "Midnight")
 
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "BryanUltra"
-ScreenGui.Parent = game:GetService("CoreGui")
+-- PESTAÑA PRINCIPAL
+local Tab = Window:NewTab("Principal")
+local Section = Tab:NewSection("Ruta a la Torre")
 
-local Main = Instance.new("Frame")
-Main.Size = UDim2.new(0, 180, 0, 100)
-Main.Position = UDim2.new(0.5, -90, 0.4, 0)
-Main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Main.BorderSizePixel = 4
-Main.Active = true
-Main.Draggable = true
-Main.Parent = ScreenGui
-
--- BOTÓN 1: RECOJO E
-local btnE = Instance.new("TextButton")
-btnE.Size = UDim2.new(1, -10, 0, 40)
-btnE.Position = UDim2.new(0, 5, 0, 5)
-btnE.Text = "AUTO-E: ON"
-btnE.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-btnE.TextColor3 = Color3.new(1,1,1)
-btnE.Parent = Main
-
-task.spawn(function()
-    while true do
-        pcall(function()
-            for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
-                if v:IsA("ProximityPrompt") then v.HoldDuration = 0 end
-            end
-        end)
-        task.wait(2)
-    end
-end)
-
--- BOTÓN 2: VIAJE ABISMAL (-300)
-local btnViaje = Instance.new("TextButton")
-btnViaje.Size = UDim2.new(1, -10, 0, 40)
-btnViaje.Position = UDim2.new(0, 5, 0, 50)
-btnViaje.Text = "TELEPORT TORRE (-300m)"
-btnViaje.BackgroundColor3 = Color3.fromRGB(0, 50, 200)
-btnViaje.TextColor3 = Color3.new(1,1,1)
-btnViaje.Parent = Main
-
-btnViaje.MouseButton1Click:Connect(function()
-    btnViaje.Text = "VIAJANDO..."
-    btnViaje.Interactable = false
+-- BOTÓN DE VIAJE (CLONADO DE OSAKA PERO CON -150m)
+Section:NewButton("IR A LA TORRE (GALAXY)", "650 pasos a 4.5m - Inmune a Olas", function()
+    local p = game.Players.LocalPlayer
+    local c = p.Character or p.CharacterAdded:Wait()
+    local r = c:WaitForChild("HumanoidRootPart")
+    local h = c:WaitForChild("Humanoid")
     
-    local char = game.Players.LocalPlayer.Character
-    local root = char:WaitForChild("HumanoidRootPart")
-    local dir = root.CFrame.LookVector
-    local targetY = root.Position.Y - 300 -- PROFUNDIDAD MÁXIMA PARA EVITAR DAÑO
-    
-    root.Anchored = true 
+    local sP = r.Position
+    local sR = r.CFrame.Rotation
+    local d = r.CFrame.LookVector
+    r.Anchored = true
     
     task.spawn(function()
-        -- Viaje rápido y profundo
-        for i = 1, 150 do 
-            root.CFrame = CFrame.new(root.Position.X + (dir.X * 3), targetY, root.Position.Z + (dir.Z * 3))
+        -- 650 PASOS A 4.5m (PARA CRUZAR TODO EL MAPA)
+        for i = 1, 650 do
+            -- Bajamos a la Profundidad Galaxy -150
+            r.CFrame = CFrame.new(sP + (d * (i * 4.5))) * CFrame.new(0, -150, 0) * sR
+            
+            -- Bloqueo de velocidad para que el server no te regrese
+            r.Velocity = Vector3.new(0,0,0)
+            h:ChangeState(11) 
+            
             task.wait(0.01)
         end
-        -- Regreso a la superficie
-        root.CFrame = CFrame.new(root.Position.X, targetY + 301, root.Position.Z)
-        root.Anchored = false
-        btnViaje.Text = "TELEPORT TORRE (-300m)"
-        btnViaje.Interactable = true
+        
+        -- SUBIDA FINAL EN LA ESTRUCTURA
+        r.CFrame = r.CFrame * CFrame.new(0, 162, 0)
+        task.wait(0.2)
+        r.Anchored = false
+        h:ChangeState(12)
     end)
 end)
+
+-- SECCIÓN DE UTILIDADES
+local Sec2 = Tab:NewSection("Extras para el Live")
+
+Sec2:NewButton("AUTO-E (PREMIOS)", "Sin tiempo de espera", function()
+    task.spawn(function()
+        while task.wait(0.5) do
+            pcall(function()
+                for _, v in pairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") then v.HoldDuration = 0 end
+                end
+            end)
