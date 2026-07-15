@@ -1,13 +1,13 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Tussi Predatory v1 | Deadshot Edition",
-   LoadingTitle = "Cargando Tussi Predatory...",
+   Name = "Tuss Predatory v1 | Deadshot Edition",
+   LoadingTitle = "Cargando Tuss Predatory...",
    LoadingSubtitle = "Por Bryan",
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = "TussiPredatoryConfig",
-      FileName = "TussiPredatory"
+      FolderName = "TussPredatoryConfig",
+      FileName = "TussPredatory"
    },
    Theme = "DarkBlue"
 })
